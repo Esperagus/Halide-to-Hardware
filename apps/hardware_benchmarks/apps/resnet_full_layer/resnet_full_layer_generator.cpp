@@ -15,10 +15,10 @@ public:
     GeneratorParam<int> in_img{"in_img", 28};    // default: 28
 
     // pad determines the padding to the input image size
-    GeneratorParam<int> pad{"pad", 1};    // default: 1
+    GeneratorParam<int> pad{"pad", 0};    // default: 1
   
     // ksize determines the output stencil size
-    GeneratorParam<uint8_t> ksize{"ksize", 3};    // default: 3
+    GeneratorParam<uint8_t> ksize{"ksize", 1};    // default: 3
   
     // Stride determines the sampling rate for the down sample
     GeneratorParam<int>  stride{"stride", 1};  // default: 1
@@ -32,15 +32,16 @@ public:
     GeneratorParam<int> k_oc{"k_oc", 3};    // default: 3
 
     // n_ic determines the total number of input channels
-    GeneratorParam<int> n_ic{"n_ic", 64};    // default: 64
+    GeneratorParam<int> n_ic{"n_ic", 3072};    // default: 64
   
     // n_oc determines the total number of output channels
-    GeneratorParam<int> n_oc{"n_oc", 48};    // default: 48
+    GeneratorParam<int> n_oc{"n_oc", 768};    // default: 48
   
 
     void generate() {
         //int imgsize = (in_img + 0 - ksize + 1) / stride;
         int imgsize = floor( (in_img + 2*pad - ksize) / stride ) + 1;
+        imgsize = 512;
       
         /* THE ALGORITHM */
 
