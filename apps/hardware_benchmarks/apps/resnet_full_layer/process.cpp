@@ -61,12 +61,12 @@ int main( int argc, char **argv ) {
     // Set enviroment variable to set these:
     //  HALIDE_GEN_ARGS="in_img=28 pad=1 ksize=3 stride=1 k_ic=8 k_oc=6"
 
-    /*auto OX = getenv("in_img");
+    auto OX = getenv("in_img");
     auto P = getenv("pad");
     auto K = getenv("ksize");
     auto S = getenv("stride");
     auto IC = getenv("n_ic");
-    auto OC = getenv("n_oc");*/
+    auto OC = getenv("n_oc");
 
     auto in_img = 512; // OX ? atoi(OX) : 28;
     auto pad = P ? atoi(P) : 0;
@@ -74,13 +74,6 @@ int main( int argc, char **argv ) {
     auto stride = S ? atoi(S) : 1;
     auto n_ic = IC ? atoi(IC) : 3072;
     auto n_oc = OC ? atoi(OC) : 768;
-
-    auto OX = in_img
-    auto P = pad
-    auto K = ksize
-    auto S = stride
-    auto IC = n_ic
-    auto OC = n_oc
 
     int X = in_img;
     int Y = X;
