@@ -10,16 +10,16 @@ namespace {
 using namespace Halide;
 
 // Size of blur for gradients.
-const int blockSize = 2;
+const int blockSize = 3;
 
 class GaussianBlur : public Halide::Generator<GaussianBlur> {
 public:
     Input<Buffer<uint8_t>>  input{"input", 2};
     Output<Buffer<uint8_t>> output{"output", 2};
   
-    GeneratorParam<uint8_t> schedule{"schedule", 3};    // default: 0
-    GeneratorParam<uint8_t> width{"width", 56};         // default: 62
-    GeneratorParam<uint8_t> myunroll{"myunroll", 1};        // default: 62
+    GeneratorParam<uint8_t> schedule{"schedule", 0};    // default: 0
+    GeneratorParam<uint8_t> width{"width", 62};         // default: 62
+    GeneratorParam<uint8_t> myunroll{"myunroll", 1};    // default: 1
 
   //Input<int32_t> tilesize{"tilesize", 64, 8, 128}; // default 64. bounded between 8 and 128
   //int tilesize = imgSize / 2;
@@ -253,6 +253,21 @@ public:
 ////  for fx in range(5):
 ////  parallel ic 16 times
 ////  parallel oc 8 times
+
+accelerator({hw_input, hw_kernel} -> hw_output)
+  .unroll(oc, k_oc)
+  .unroll(ic, k_ic)
+  .loopnest(MEM:[(fx 5), (fy 5), (oc 1), (ic 1)],
+            GLB:[(x 56), (y 56), (ic 4)],
+            host:[(oc 32)]);
+
+accelerator({hw_input, hw_kernel} -> hw_output)
+  .loopnest(MEM:[u(r.ic 16) u(oc 8) (x 28) (y 28) (r.x 3) (r.y 3) (r.ic 2))],
+            GLB:[(oc 4) (x 2) (y 2)],
+            host:[]);
+// from this loopnest for the output_cgra, the other loop orders should be determined
+
+            
 
 */
 
