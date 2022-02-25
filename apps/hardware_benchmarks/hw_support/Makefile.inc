@@ -10,6 +10,8 @@ LDFLAGS ?=
 COREIR_DIR ?= $(HALIDE_BIN_PATH)/../coreir
 FUNCBUF_DIR ?= $(HALIDE_BIN_PATH)/../BufferMapping/cfunc
 CLOCKWORK_DIR ?= $(HALIDE_BIN_PATH)/../clockwork
+METAMAPPER_DIR ?= $(HALIDE_BIN_PATH)/../MetaMapper
+GARNET_DIR ?= $(HALIDE_BIN_PATH)/../garnet
 
 include $(HALIDE_BIN_PATH)/apps/support/Makefile.inc
 
