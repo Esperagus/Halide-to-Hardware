@@ -23,11 +23,11 @@ using namespace Halide::Runtime;
 
 int main( int argc, char **argv ) {
   std::map<std::string, std::function<void()>> functions;
-  ManyInOneOut_ProcessController<int16_t> processor("relu_layer", {"input.mat", "input_bias.mat"});
+  ManyInOneOut_ProcessController<int16_t> processor("relu_layer", {"input.mat"});
 
   #if defined(WITH_CPU)
       auto cpu_process = [&]( auto &proc ) {
-        relu_layer(proc.inputs["input.mat"], proc.inputs["input_bias.mat"], proc.output);
+        relu_layer(proc.inputs["input.mat"], proc.output);
       };
       functions["cpu"] = [&](){ cpu_process( processor ); } ;
   #endif
@@ -46,7 +46,7 @@ int main( int argc, char **argv ) {
         RDAI_Platform *rdai_platform = RDAI_register_platform( &rdai_clockwork_sim_ops );
         if ( rdai_platform ) {
           printf( "[RUN_INFO] found an RDAI platform\n" );
-          relu_layer_clockwork(proc.inputs["input.mat"], proc.inputs["input_bias.mat"], proc.output);
+          relu_layer_clockwork(proc.inputs["input.mat"], proc.output);
           RDAI_unregister_platform( rdai_platform );
         } else {
           printf("[RUN_INFO] failed to register RDAI platform!\n");
@@ -64,7 +64,6 @@ int main( int argc, char **argv ) {
   processor.run_calls = functions;
 
   processor.inputs["input.mat"]        = Buffer<int16_t>(n_oc, out_img, out_img);
-  processor.inputs["input_bias.mat"]   = Buffer<int16_t>(n_oc, out_img, out_img);
   processor.output                     = Buffer<int16_t>(n_oc, out_img, out_img);
 
   processor.inputs_preset = true;
@@ -80,11 +79,6 @@ int main( int argc, char **argv ) {
           processor.inputs["input.mat"](w, x, y) = (rand() % (2*max_rand)) - max_rand;
         }
         
-        if (rand() % 100 < 60) { // 60% zero, else rand
-          processor.inputs["input_bias.mat"](w, x, y) = 0;
-        } else {
-          processor.inputs["input_bias.mat"](w, x, y) = (rand() % (2*max_rand)) - max_rand;
-        }
       }
     }
   }

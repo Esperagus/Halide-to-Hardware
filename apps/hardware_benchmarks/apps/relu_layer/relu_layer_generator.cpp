@@ -10,7 +10,6 @@ using namespace Halide::ConciseCasts;
 class ReluLayer : public Halide::Generator<ReluLayer> {
 public:
     Input<Buffer<int16_t>>  input{"input", 3};
-    Input<Buffer<int16_t>>  input_bias{"input_bias", 3};
     Output<Buffer<int16_t>> output{"output", 3};
 
     GeneratorParam<int> out_img{"out_img", 56};
@@ -22,12 +21,11 @@ public:
         /* THE ALGORITHM */
 
       Var x("x"), y("y"), w("w");
-      Func hw_input("hw_input"), hw_input_bias("hw_input_bias"), relu, hw_output;
+      Func hw_input("hw_input"), relu, hw_output;
 
       hw_input(w, x, y) = i16(input(w, x, y));
-      hw_input_bias(w, x, y) = i16(input_bias(w, x, y));
         
-      relu(w, x, y) = max(hw_input(w,x,y) + hw_input_bias(w, x, y), i16(0));
+      relu(w, x, y) = max(hw_input(w,x,y), i16(0));
       
       hw_output(w, x, y) = relu(w, x, y);
       output(w, x, y) = i16(hw_output(w, x, y));
@@ -57,9 +55,6 @@ public:
           hw_input.stream_to_accelerator();
           hw_input.in().unroll(w, myunroll);
 
-          hw_input_bias.stream_to_accelerator();
-          hw_input_bias.in().unroll(w, myunroll);
-          
         } else {
 
         }
